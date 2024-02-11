@@ -10,7 +10,7 @@ from server.service.load import load_docs
 def persist_vector_db(category: str, s_docs):
     # 定义 Embeddings
     embedding = OpenAIEmbeddings()
-    base_directory = '../../data_base/vector_db/chroma/'
+    base_directory = '../../data_base/chroma/'
     # 定义持久化路径
     persist_directory = os.path.join(base_directory, category)
 

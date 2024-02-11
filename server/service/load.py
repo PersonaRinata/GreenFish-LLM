@@ -67,4 +67,18 @@ def load_docs():
     return docs_dict
 
 
-# print(load_docs())
+def load_db(category: str):
+    base_directory = '../../data_base/chroma/'
+    persist_directory = os.path.join(base_directory, category)
+    # 定义 Embeddings
+    embedding = OpenAIEmbeddings()
+    # 加载数据库
+    vectordb = Chroma(
+        persist_directory=persist_directory,  # 允许我们将 persist_directory 目录保存到磁盘上
+        embedding_function=embedding
+    )
+    return vectordb
+
+
+def get_retrieval(category: str):
+    return load_db(category).as_retriever()
