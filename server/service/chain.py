@@ -1,10 +1,5 @@
-import os
-
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
-
-from langchain_community.vectorstores.chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
 
 from server.service.load import get_retrieval
 
