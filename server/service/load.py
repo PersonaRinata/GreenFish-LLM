@@ -16,9 +16,9 @@ def load_docs():
 
     base_path = '../../knowledge_db/'
     dirs = os.listdir(base_path)
-    print(dirs)
+    # print(dirs)
 
-    docs_set = []
+    docs_dict = {}
     for dir in dirs:
         # 创建加载器列表
         loaders = []
@@ -26,19 +26,18 @@ def load_docs():
         docs = []
         # 指定 PDF 文件所在的文件夹路径
         category_path = os.path.join(base_path, dir)
-        print(f'category_path:{category_path}')
-        # ../../ knowledge_db / type0
+        # print(f'category_path:{category_path}')
         folder_paths = os.listdir(category_path)
         for folder_path in folder_paths:
             # 获取文件夹中的所有文件名
-            print(f'folder_path:{folder_path}')
+            # print(f'folder_path:{folder_path}')
             file_path = os.path.join(category_path, folder_path)
             files = os.listdir(file_path)
-            print(f'file_path:{file_path}')
+            # print(f'file_path:{file_path}')
             if folder_path == 'pdf':
                 # 遍历文件列表
                 for one_file in files:
-                    print(os.path.join(file_path, one_file))
+                    # print(os.path.join(file_path, one_file))
                     # 根据文件路径创建 PyMuPDFLoader 加载器
                     loader = PyMuPDFLoader(os.path.join(file_path, one_file))
 
@@ -64,8 +63,8 @@ def load_docs():
                     # 加载文档并将其添加到文档列表中
                     docs.extend(loader.load())
 
-        docs_set.append(docs)
-    return docs_set
+        docs_dict[dir] = docs
+    return docs_dict
 
 
 # print(load_docs())
