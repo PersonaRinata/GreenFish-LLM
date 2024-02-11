@@ -8,83 +8,64 @@ from langchain.embeddings.openai import OpenAIEmbeddings  # 导入OpenAIEmbeddin
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-openai.api_key = os.getenv('OPENAI_API_KEY')
-openai.base_url = os.getenv('OPENAI_BASE_URL')
 
-base_path = '../../knowledge_db/'
-dirs = os.listdir(base_path)
+def load_docs():
+    load_dotenv()
+    openai.api_key = os.getenv('OPENAI_API_KEY')
+    openai.base_url = os.getenv('OPENAI_BASE_URL')
 
-for dir in dirs:
-    # 指定 PDF 文件所在的文件夹路径
-    folder_path = os.path.join(base_path, dir)
-    print(folder_path)
+    base_path = '../../knowledge_db/'
+    dirs = os.listdir(base_path)
+    print(dirs)
 
-    for detail_folder_path in folder_path:
-        # 获取文件夹中的所有文件名
-        files = os.listdir(detail_folder_path)
-
+    docs_set = []
+    for dir in dirs:
         # 创建加载器列表
         loaders = []
-
-        # 遍历文件列表
-        for one_file in files:
-            # 根据文件路径创建 PyMuPDFLoader 加载器
-            loader = PyMuPDFLoader(os.path.join(folder_path, one_file))
-
-            # 将加载器添加到列表中
-            loaders.append(loader)
-
         # 创建文档列表
         docs = []
+        # 指定 PDF 文件所在的文件夹路径
+        category_path = os.path.join(base_path, dir)
+        print(f'category_path:{category_path}')
+        # ../../ knowledge_db / type0
+        folder_paths = os.listdir(category_path)
+        for folder_path in folder_paths:
+            # 获取文件夹中的所有文件名
+            print(f'folder_path:{folder_path}')
+            file_path = os.path.join(category_path, folder_path)
+            files = os.listdir(file_path)
+            print(f'file_path:{file_path}')
+            if folder_path == 'pdf':
+                # 遍历文件列表
+                for one_file in files:
+                    print(os.path.join(file_path, one_file))
+                    # 根据文件路径创建 PyMuPDFLoader 加载器
+                    loader = PyMuPDFLoader(os.path.join(file_path, one_file))
 
-        # 遍历加载器列表
-        for loader in loaders:
-            # 加载文档并将其添加到文档列表中
-            docs.extend(loader.load())
+                    # 将加载器添加到列表中
+                    loaders.append(loader)
 
-        # 指定 Markdown 文件所在的文件夹路径
-        folder_path = "../data_base/knowledge_db/md/"
+                # 遍历加载器列表
+                for loader in loaders:
+                    # 加载文档并将其添加到文档列表中
+                    docs.extend(loader.load())
 
-        # 获取文件夹中的所有文件名
-        files = os.listdir(folder_path)
+            elif folder_path == 'md':
+                # 遍历文件列表
+                for one_file in files:
+                    # 根据文件路径创建 UnstructuredMarkdownLoader 加载器
+                    loader = UnstructuredMarkdownLoader(os.path.join(file_path, one_file))
 
-        # 创建加载器列表
-        loaders = []
+                    # 将加载器添加到列表中
+                    loaders.append(loader)
 
-        # 遍历文件列表
-        for one_file in files:
-            # 根据文件路径创建 UnstructuredMarkdownLoader 加载器
-            loader = UnstructuredMarkdownLoader(os.path.join(folder_path, one_file))
+                # 遍历加载器列表
+                for loader in loaders:
+                    # 加载文档并将其添加到文档列表中
+                    docs.extend(loader.load())
 
-            # 将加载器添加到列表中
-            loaders.append(loader)
+        docs_set.append(docs)
+    return docs_set
 
-        # 创建文档列表
-        docs = []
 
-        # 遍历加载器列表
-        for loader in loaders:
-            # 加载文档并将其添加到文档列表中
-            docs.extend(loader.load())
-
-        # 切分文档
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=150)
-        split_docs = text_splitter.split_documents(docs)
-
-        # 定义 Embeddings
-        embedding = OpenAIEmbeddings()
-
-        # 定义持久化路径
-        persist_directory = '../data_base/vector_db/chroma'
-
-        # 加载数据库
-        vectordb = Chroma.from_documents(
-            documents=split_docs,
-            embedding=embedding,
-            persist_directory=persist_directory  # 允许我们将persist_directory目录保存到磁盘上
-        )
-
-        # 向量数据库持久化
-        vectordb.persist()
-
+# print(load_docs())

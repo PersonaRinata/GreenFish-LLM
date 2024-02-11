@@ -1,3 +1,4 @@
 .idea
 /data_base
 /knowledge_db
+/.env
