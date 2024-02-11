@@ -1,6 +1,5 @@
 import os
 
-import openai
 from dotenv import load_dotenv, find_dotenv
 from flask import request, jsonify
 from tools.error import *
@@ -10,8 +9,6 @@ from server.service.chain import get_chain
 
 def create_chat_route(app):
     _ = load_dotenv(find_dotenv())
-    openai.api_key = os.getenv('OPENAI_API_KEY')
-    openai.base_url = os.getenv('OPENAI_BASE_URL')
     @app.route('/chat', methods=['POST'])
     def chat_route():
         try:
@@ -34,7 +31,6 @@ def create_chat_route(app):
             return jsonify(base_resp(internal_server_error))
 
         chain = get_chain(category)
-        print(openai.base_url)
         res = chain.invoke(
             input={"query": query}
         )
