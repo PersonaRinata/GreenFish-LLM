@@ -1,13 +1,4 @@
-import os
-
-import openai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from dotenv import load_dotenv
-
-load_dotenv()
-openai.api_key = os.getenv('OPENAI_API_KEY')
-openai.base_url = os.getenv('OPENAI_BASE_URL')
-
 
 def split_docs(docs):
     # 切分文档

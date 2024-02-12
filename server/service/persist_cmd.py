@@ -1,7 +1,7 @@
 import os
 
+from langchain_community.embeddings import QianfanEmbeddingsEndpoint
 from langchain_community.vectorstores.chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
 from server.service.split import split_docs
 
 from server.service.load import load_docs
@@ -9,7 +9,10 @@ from server.service.load import load_docs
 
 def persist_vector_db(category: str, s_docs):
     # 定义 Embeddings
-    embedding = OpenAIEmbeddings()
+    embedding = QianfanEmbeddingsEndpoint(
+        streaming=True,
+        model="Embedding-V1",
+    )
     base_directory = '../../data_base/chroma/'
     # 定义持久化路径
     persist_directory = os.path.join(base_directory, category)

@@ -1,5 +1,3 @@
-import os
-
 from dotenv import load_dotenv, find_dotenv
 from flask import request, jsonify
 from tools.error import *

@@ -1,19 +1,13 @@
-import openai
-from langchain.vectorstores import Chroma  # 导入Chroma向量存储库
-from langchain.document_loaders import PyMuPDFLoader  # 导入PyMuPDFLoader文档加载库
-from langchain.text_splitter import RecursiveCharacterTextSplitter  # 导入RecursiveCharacterTextSplitter文本拆分库
-from langchain.document_loaders import UnstructuredMarkdownLoader  # 导入UnstructuredMarkdownLoader文档加载库
-from langchain.document_loaders import UnstructuredFileLoader  # 导入UnstructuredFileLoader文档加载库
-from langchain.embeddings.openai import OpenAIEmbeddings  # 导入OpenAIEmbeddings嵌入库
+from langchain.vectorstores import Chroma
+from langchain.document_loaders import PyMuPDFLoader
+from langchain.document_loaders import UnstructuredMarkdownLoader
+from langchain.document_loaders import TextLoader
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain_community.embeddings import QianfanEmbeddingsEndpoint
 import os
-from dotenv import load_dotenv
 
 
 def load_docs():
-    load_dotenv()
-    openai.api_key = os.getenv('OPENAI_API_KEY')
-    openai.base_url = os.getenv('OPENAI_BASE_URL')
-
     base_path = '../../knowledge_db/'
     dirs = os.listdir(base_path)
     # print(dirs)
@@ -63,6 +57,18 @@ def load_docs():
                     # 加载文档并将其添加到文档列表中
                     docs.extend(loader.load())
 
+            elif folder_path == 'txt':
+                for one_file in files:
+                    # 根据文件路径创建 UnstructuredMarkdownLoader 加载器
+                    loader = TextLoader(os.path.join(file_path, one_file))
+
+                    # 将加载器添加到列表中
+                    loaders.append(loader)
+                # 遍历加载器列表
+                for loader in loaders:
+                    # 加载文档并将其添加到文档列表中
+                    docs.extend(loader.load())
+
         docs_dict[dir] = docs
     return docs_dict
 
@@ -71,7 +77,10 @@ def load_db(category: str):
     base_directory = '../../data_base/chroma/'
     persist_directory = os.path.join(base_directory, category)
     # 定义 Embeddings
-    embedding = OpenAIEmbeddings()
+    embedding = QianfanEmbeddingsEndpoint(
+        streaming=True,
+        model="Embedding-V1",
+    )
     # 加载数据库
     vectordb = Chroma(
         persist_directory=persist_directory,  # 允许我们将 persist_directory 目录保存到磁盘上
