@@ -74,7 +74,7 @@ def load_docs():
 
 
 def load_db(category: str):
-    base_directory = '../../data_base/chroma/'
+    base_directory = '../../data_base/'
     persist_directory = os.path.join(base_directory, category)
     # 定义 Embeddings
     embedding = QianfanEmbeddingsEndpoint(
