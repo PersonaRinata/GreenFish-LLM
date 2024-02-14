@@ -16,7 +16,7 @@ def persist_vector_db(category: str, s_docs):
         model="Embedding-V1",
         chunk_size=16,
     )
-    base_directory = '../../data_base/'
+    base_directory = '../../../data_base/'
     # 定义持久化路径
     persist_directory = os.path.join(base_directory, category)
 
